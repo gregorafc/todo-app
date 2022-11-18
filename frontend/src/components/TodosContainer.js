@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import update from 'immutability-helper'
 
+const backend_URL = process.env.REACT_APP_API_URL
+
+
 class TodosContainer extends Component {
   constructor(props) {
     super(props)
@@ -12,7 +15,7 @@ class TodosContainer extends Component {
 	}
 
   getTodos() {
-    axios.get('/api/v1/todos')
+    axios.get(backend_URL + '/api/v1/todos')
     .then(response => {
       this.setState({todos: response.data})
     })
@@ -21,7 +24,7 @@ class TodosContainer extends Component {
   
   createTodo = (e) => {
     if (e.key === 'Enter' && !(e.target.value === '')) {
-      axios.post('/api/v1/todos', {todo: {title: e.target.value}})
+      axios.post(backend_URL + '/api/v1/todos', {todo: {title: e.target.value}})
       .then(response => {
         const todos = update(this.state.todos, {
           $splice: [[0, 0, response.data]]
@@ -40,7 +43,7 @@ class TodosContainer extends Component {
   }
 
   updateTodo = (e, id) => {
-    axios.put(`/api/v1/todos/${id}`, {todo: {done: e.target.checked}})
+    axios.put(backend_URL + `/api/v1/todos/${id}`, {todo: {done: e.target.checked}})
     .then(response => {
       const todoIndex = this.state.todos.findIndex(x => x.id === response.data.id)
       const todos = update(this.state.todos, {
@@ -54,7 +57,7 @@ class TodosContainer extends Component {
   }
 
   deleteTodo = (id) => {
-    axios.delete(`/api/v1/todos/${id}`)
+    axios.delete(backend_URL + `/api/v1/todos/${id}`)
     .then(response => {
       const todoIndex = this.state.todos.findIndex(x => x.id === id)
       const todos = update(this.state.todos, {
